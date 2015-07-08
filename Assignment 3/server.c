@@ -6,37 +6,39 @@
 #include<sys/types.h>    
 #include<unistd.h>    
 	 
-int main() {    
-	int create_socket, new_socket;    
-	socklen_t addrlen;    
-	int bufsize = 1024;    
-	char *buffer = malloc(bufsize);    
-	struct sockaddr_in address;    
- 
-	if ((create_socket = socket(AF_INET, SOCK_STREAM, 0)) > 0){    
+int create_socket, new_socket;    
+socklen_t addrlen;    
+int bufsize = 1024;    
+char *buffer;    
+struct sockaddr_in address;    
+
+void init_server()
+{
+	buffer = malloc(bufsize);       
+	if ((create_socket = socket(AF_INET, SOCK_STREAM, 0)) > 0)
+	{    
 		printf("The socket was created\n");
 	}
-	 
 	address.sin_family = AF_INET;    
 	address.sin_addr.s_addr = INADDR_ANY;    
 	address.sin_port = htons(15000);    
-	 
-	if (bind(create_socket, (struct sockaddr *) &address, sizeof(address)) == 0){    
+	if (bind(create_socket, (struct sockaddr *) &address, sizeof(address)) == 0)
+	{    
 		printf("Binding Socket\n");
-		
 	}
-	 
-	 
-	while (1) {
-		 
+}
+
+void managed_element_control_cycle()
+{
+	//Server control cycle
 		if (listen(create_socket, 10) < 0) {    
-			perror("server: listen");    
-			exit(1);    
+		perror("server: listen");    
+		exit(1);    
 		}    
 	 
 		if ((new_socket = accept(create_socket, (struct sockaddr *) &address, &addrlen)) < 0) {    
 			perror("server: accept");    
-			exit(1);   
+			exit(1);    
 		}    
 	 
 		if (new_socket > 0){    
@@ -50,7 +52,39 @@ int main() {
 		write(new_socket, "Content-Type: text/html\n\n", 25);
 		write(new_socket, "<html><body><H1>Hello world</H1></body></html>",46);   
 		close(new_socket);
-		  
+}
+
+void am_monitor()
+{
+	
+}
+
+void am_plan()
+{
+
+}
+
+void am_analyze()
+{
+
+}
+
+void am_execute()
+{
+
+}
+
+void autonomic_manager_control_cycle()
+{
+
+}
+
+int main() {   
+	init_server(); 
+	while (1) 
+	{    
+		managed_element_control_cycle();
+		autonomic_manager_control_cycle();
 	}    
 	close(create_socket);    
 	return 0;    
