@@ -76,7 +76,10 @@ void am_execute()
 
 void autonomic_manager_control_cycle()
 {
-
+	am_monitor();
+	am_analyze();
+	am_plan();
+	am_execute();
 }
 
 int main() {   
