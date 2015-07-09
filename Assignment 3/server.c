@@ -45,6 +45,19 @@ typedef struct {
 	long time_to_run;
 	int priority;
 }job;
+
+//Adding a new job
+job *create_job(char *name, int id, long time_to_run, int priority){
+	job *new_job = malloc(sizeof(job));
+	
+	new_job->name = strdup(name);
+	new_job->id = id;
+	new_job->time_to_run = time_to_run;
+	new_job->priority = priority;
+	
+	return new_job;	
+}
+
 //Event data types
 typedef struct {
     char *sourceComponentId;
