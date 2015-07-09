@@ -140,7 +140,7 @@ void symptom_engine()
 	// Check event log and/or recent event for symptom
 }
 
-void am_monitor()
+void am_monitor(event element_state)
 {
 	//Update local symptom thresholds
 	//Symptoms are defined in terms of evidence scores
@@ -164,7 +164,7 @@ void am_execute()
 
 void autonomic_manager_control_cycle(event element_state)
 {
-	am_monitor();
+	am_monitor(element_state);
 	am_analyze();
 	am_plan();
 	am_execute();
