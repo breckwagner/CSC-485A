@@ -13,9 +13,34 @@ int bufsize = 1024;
 char *buffer;    
 struct sockaddr_in address; 
 
+// typedef enum {
+// 	"request_job";
+// 	"cancel_job";
+// 	"return_status";
+// 	"change_policy";
+// }request_types;
+
+//Request types
+//	job request_job;
+//	user_id ip;
+//	
+
+//Job types
+//	char[] name;
+//	uint64_t id;
+//	
+
+typedef struct {
+	// Knowledge "database" (in main memory)
+	// Event types:
+	// 	user_request
+	// 		user_id
+	// 		request_made
+	// 		time
+}user_request;
+
 //Event data types
 typedef struct {
-    char *reporterComponentId;
     char *sourceComponentId;
     char *situation;
 }event;
@@ -89,7 +114,7 @@ void init_server()
 event managed_element_control_cycle()
 {
 	event component_state;
-	component_state = (event) {.reporterComponentId ="server_0001",.sourceComponentId="server_0001",.situation="listening"};
+	component_state = (event) {.sourceComponentId="server_0001",.situation="listening"};
 	//Server control cycle
 	if (listen(create_socket, 10) < 0) {    
 	perror("server: listen");
@@ -114,7 +139,7 @@ event managed_element_control_cycle()
 	write(new_socket, "Content-Type: text/html\n\n", 25);
 	write(new_socket, "<html><body><H1>Hello world</H1></body></html>",46);   
 	close(new_socket);
-	component_state= (event){.reporterComponentId ="server_0001",.sourceComponentId="server_0001",.situation="website successfully sent"};
+	component_state= (event){.sourceComponentId="server_0001",.situation="website successfully sent"};
 
 	return component_state;
 }
@@ -150,9 +175,7 @@ void symptom_engine()
 
 void am_monitor(event element_state)
 {
-	//Update local symptom thresholds
-	//Symptoms are defined in terms of evidence scores
-	//Search for symptoms from symptom database
+	//Search for symptoms from symptom database using respective symptom engines
 }
 
 
@@ -182,7 +205,7 @@ void am_update_policy()
 {
 	policy temp_policy;
 	temp_policy = get_policy();
-	if (strncmp(temp_policy.temp,"nothing",7)!=0)
+	if (strncmp(temp_policy.temp,"nothing",7))
 	{
 		//Add policy to policy database 
 	}
