@@ -182,7 +182,7 @@ void am_update_policy()
 {
 	policy temp_policy;
 	temp_policy = get_policy();
-	if (strncpy(temp_policy.temp,"nothing",7))
+	if (strncmp(temp_policy.temp,"nothing",7)!=0)
 	{
 		//Add policy to policy database 
 	}
