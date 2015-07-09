@@ -1,6 +1,7 @@
 #include<netinet/in.h>    
 #include<stdio.h>    
-#include<stdlib.h>    
+#include<stdlib.h>  
+#include<string.h>  
 #include<sys/socket.h>    
 #include<sys/stat.h>    
 #include<sys/types.h>    
@@ -61,6 +62,13 @@ typedef struct {
     symptom_schema *schema;
     symptom_definition *definition;
 }symptom;
+
+//Policy data types
+typedef struct {
+	//Whatever is in here, it has to be amenable to our policy type.
+	//It may be action-, goal-, or utility function-based
+	char *temp;
+}policy;
 
 void init_server()
 {
@@ -147,12 +155,13 @@ void am_monitor(event element_state)
 	//Search for symptoms from symptom database
 }
 
-void am_plan()
+
+void am_analyze()
 {
 
 }
 
-void am_analyze()
+void am_plan()
 {
 
 }
@@ -162,8 +171,27 @@ void am_execute()
 
 }
 
+policy get_policy()
+{
+	policy input;
+	input = (policy){"nothing"};
+	return input;
+}
+
+void am_update_policy()
+{
+	policy temp_policy;
+	temp_policy = get_policy();
+	if (strncpy(temp_policy.temp,"nothing",7))
+	{
+		//Add policy to policy database 
+	}
+}
+
 void autonomic_manager_control_cycle(event element_state)
 {
+	am_update_policy();
+	//Control loop
 	am_monitor(element_state);
 	am_analyze();
 	am_plan();
