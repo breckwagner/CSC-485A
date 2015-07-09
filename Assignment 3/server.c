@@ -10,7 +10,6 @@
 int create_socket, new_socket;    
 socklen_t addrlen;    
 int bufsize = 1024;   
-int MAXNAME = 100;
 char *buffer;    
 struct sockaddr_in address; 
 
@@ -40,12 +39,12 @@ typedef struct {
 	// 		time
 }user_request;
 //Job structure
-typedef struct job{
-	char name[MAXNAME];
-	int job_id;
+typedef struct {
+	char *name;
+	int id;
 	long time_to_run;
 	int priority;
-};
+}job;
 //Event data types
 typedef struct {
     char *sourceComponentId;
