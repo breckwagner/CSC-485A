@@ -16,16 +16,39 @@ struct sockaddr_in address;
 event event_buffer[50];
 int events_in_buffer;
 
-//Adding a new job
-job *create_job(char *name, int id, long time_to_run, int priority){
-	job *new_job = malloc(sizeof(job));
-	
-	new_job->name = strdup(name);
-	new_job->id = id;
-	new_job->time_to_run = time_to_run;
-	new_job->priority = priority;
-	
-	return new_job;	
+struct Job_struct {
+    char *name;
+    int id;
+    int time;
+    int priority;
+};
+//Creates the job
+struct Job_struct *create_job(char *name, int id, int time, int priority)
+{
+    struct Job_struct *job = malloc(sizeof(struct Job_struct));
+    assert(job != NULL);
+    job->name = strdup(name);
+    job->id = id;
+    job->time = time;
+    job->priority = priority;
+
+    return job;
+}
+
+//Frees the job memory space
+void free_job(struct Job_struct *job)
+{
+    assert(job != NULL);
+    free(job->name);
+    free(job);
+}
+// Prints the job information to console
+void print_job(struct Job_struct *job)
+{
+    printf("Job name: %s\n", job->name);
+    printf("Job id: %d\n", job->id);
+    printf("Job time: %d\n", job->time);
+    printf("Job Priority: %d\n", job->priority);
 }
 
 void init_server()
