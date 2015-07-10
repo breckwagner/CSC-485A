@@ -13,6 +13,8 @@ socklen_t addrlen;
 int bufsize = 1024;   
 char *buffer;    
 struct sockaddr_in address; 
+event event_buffer[50];
+int events_in_buffer;
 
 //Adding a new job
 job *create_job(char *name, int id, long time_to_run, int priority){
@@ -45,7 +47,8 @@ void init_server()
 void init_autonomic_manager()
 {
 	//Create event buffer
-	struct Node* head = NULL;
+	event event_buffer[50];
+	events_in_buffer = 0;
 }
 
 event server_control_cycle()
@@ -104,14 +107,30 @@ event retrieve_state()
 //	-policies
 //	-scripts
 
-void write_event_to_event_log_buffer()
-{
-	//turn event struct into XML text, add text to array
-}
-
 void flush_event_log_buffer()
 {
 	//Print all events in log buffer to log file; clear log buffer
+
+	//Now clear buffer
+	event_buffer = event[50];
+	events_in_buffer = 0;
+}
+
+void write_event_to_event_log_buffer(event e)
+{
+	//add event to array
+	if (events_in_buffer <= 50)
+	{
+		//Buffer is full. Flush buffer.
+		flush_event_log_buffer();
+	}
+	else
+	{
+		//add event to event buffer
+		printf("add event: %s",e.situation);
+		event_buffer[events_in_buffer] = e;
+		events_in_buffer +=1;
+	}
 }
 
 void symptom_engine()
@@ -143,6 +162,11 @@ void am_monitor()
 	
 	//Check managability interface for managed element state
 	event element_state = retrieve_state();
+	//If an event is detected, write to log
+	if (!strncmp(element_state.situation,"nothing",7))
+	{
+		write_event_to_event_log_buffer(element_state);
+	}
 
 	//Add event to event queue
 	
