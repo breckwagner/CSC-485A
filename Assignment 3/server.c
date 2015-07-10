@@ -19,17 +19,17 @@ int events_in_buffer;
 struct Job_struct {
     char *name;
     int id;
-    int time;
+    int runtime;
     int priority;
 };
 //Creates the job
-struct Job_struct *create_job(char *name, int id, int time, int priority)
+struct Job_struct *create_job(char *name, int id, int runtime, int priority)
 {
     struct Job_struct *job = malloc(sizeof(struct Job_struct));
     assert(job != NULL);
     job->name = strdup(name);
     job->id = id;
-    job->time = time;
+    job->runtime = runtime;
     job->priority = priority;
 
     return job;
@@ -47,7 +47,7 @@ void print_job(struct Job_struct *job)
 {
     printf("Job name: %s\n", job->name);
     printf("Job id: %d\n", job->id);
-    printf("Job time: %d\n", job->time);
+    printf("Job time: %d\n", job->runtime);
     printf("Job Priority: %d\n", job->priority);
 }
 
