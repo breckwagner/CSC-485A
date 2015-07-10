@@ -201,14 +201,38 @@ void symptom_engine()
 	// Check event log and/or recent event for symptom
 }
 
-void am_monitor(event element_state)
+policy get_policy()
 {
+	policy input;
+	input = (policy){"nothing"};
+	return input;
+}
+
+void am_update_policy()
+{
+	policy temp_policy;
+	temp_policy = get_policy();
+	if (strncmp(temp_policy.temp,"nothing",7))
+	{
+		//Add policy to policy database 
+	}
+}
+
+void am_monitor()
+{
+	//Check autonomic manager's sensor for policy updates
+	am_update_policy();
+	
+	//Check managability interface for managed element state
+	event element_state = retrieve_state();
+	
 	//Search for symptoms from symptom database using respective symptom engines
 	//Symptoms:
 	//	duplicate_requests_suspected
 	//	spammer_detected
 	//	approached_workload_capacity
 	//	job_requested
+	//Check for each symptom.
 }
 
 
@@ -232,39 +256,22 @@ void am_execute()
 
 }
 
-policy get_policy()
+void autonomic_manager_control_cycle()
 {
-	policy input;
-	input = (policy){"nothing"};
-	return input;
-}
-
-void am_update_policy()
-{
-	policy temp_policy;
-	temp_policy = get_policy();
-	if (strncmp(temp_policy.temp,"nothing",7))
-	{
-		//Add policy to policy database 
-	}
-}
-
-void autonomic_manager_control_cycle(event element_state)
-{
-	am_update_policy();
 	//Control loop
-	am_monitor(element_state);
+	am_monitor();
 	am_analyze();
 	am_plan();
 	am_execute();
 }
 
 int main() {   
-	init_server(); 
+	init_server();
+	//init_autonomic_manager();
+	//init_managability_interface(); 
 	while (1) 
 	{    
-		event element_state = retrieve_state();
-		autonomic_manager_control_cycle(element_state);
+		autonomic_manager_control_cycle();
 	}    
 	close(create_socket);    
 	return 0;    
