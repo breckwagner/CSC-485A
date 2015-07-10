@@ -25,7 +25,8 @@ import queue
 ################################################################################
 
 # global thread safe queue to pipe requests into the MAPE-K loop
-request_queue = queue.Queue();
+PORT = 8080;
+request_queue = [];
 job_queue = {}
 
 # Utility Functions
@@ -53,13 +54,12 @@ job_queue = {}
 #	return {'name':name, 'id':id, 'runtime':runtime, 'priority':priority}
 
 def dispatcher(request, args):
-	
-	return {
-		'addJob': job_queue.append({args['id'][0]:{'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0]}}),
-		
-		'modifyJob': modifyJob(name, id, runtime, priority),
-		'removeJob':removeJob(id)
-	}[request]
+	if(request=='addJob'):
+		job_queue[str(args['id'][0])] = {'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0], 'start':time.time()};
+	elif(request=='modifyJob'):
+		modifyJob(name, id, runtime, priority)
+	elif(request=='removeJob'):
+		removeJob(id)
 
 # Classes
 ################################################################################
@@ -73,6 +73,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				print('DISCONNECTED')
 				break
 			
+			# Do data decode and format
 			tmp_data = self.data.decode('utf-8').split('\r\n')
 			_data = {}
 			for i in range(0, len(tmp_data)):
@@ -82,15 +83,15 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			url = urlparse('http://' + _data['Host:'][0] + _data['GET'][0])
 			
 			
-			if(len(url[2])>1 and url[2][1:] != 'status'):
+			if(len(url[2])>1 and url[2][1:] == 'status'):
 				content = "<html><head><title>Status</title></head><body><h1>Status</h1>"
-				for i in range(0, len(job_queue)):
-					content += job_queue[i] + "<br \>"
+				for i in range(0, len(request_queue)):
+					content += str(request_queue[i]) + "<br \>"
 				
 				content += "</body></html>"
 				
-			elif(url[2][1:] != 'favicon.ico' ):
-				request_queue.put([url[2][1:], parse_qs(url[4],keep_blank_values=True)])
+			elif(len(url[2])>1 and url[2][1:] != 'favicon.ico' ):
+				request_queue.append([url[2][1:], parse_qs(url[4],keep_blank_values=True)])
 				content ="<html><body><h1>Your Request Has Been Recieved</h1></body></html>"
 			
 			
@@ -104,7 +105,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 ################################################################################
 
 if __name__ == "__main__":
-	server = socketserver.TCPServer(('localhost', 8080), MyTCPHandler)
+	server = socketserver.TCPServer(('localhost', PORT), MyTCPHandler)
 	
 	# put actual listener on different thread for asynchronous job retrieval
 	_threading.Thread(target=server.serve_forever).start()
@@ -116,16 +117,36 @@ if __name__ == "__main__":
 		time.sleep(0.5)
 		
 		# Monitor
-		if(not request_queue.empty()):
-			request = request_queue.get()
+		########################################################################
+		
+		# if request_queue is not empty
+		if(request_queue):
+			# fetch request from queue
+			request = request_queue.pop(0)
+			print(request)
 		else:
 			request = None
 		
 		# Analyze/Plan
+		########################################################################
 		
-		if(len(job_queue)>=3):
-			print("x")
+		# if a job has gone past its max runtime, scheduale it for removal
+		r_queue = []
+		for i in job_queue:
+			if(float(job_queue[i]['runtime']) > time.time() - job_queue[i]['start']):
+				r_queue.append(job_queue[i])
+				
+		# if there is "room" in the execution list
+		room = (len(job_queue)<=3)
+			
 		
 		
 		# Execute
-		#job_queue.append()
+		########################################################################
+		
+		# for
+		while r_queue:
+			del job_queue[r_queue.pop()['id']]
+		
+		if(request and room):
+			dispatcher(request[0], request[1])
