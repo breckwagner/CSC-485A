@@ -5,46 +5,14 @@
 #include<sys/socket.h>    
 #include<sys/stat.h>    
 #include<sys/types.h>    
-#include<unistd.h>    
+#include<unistd.h>  
+#include "server.h"  
 	 
 int create_socket, new_socket;    
 socklen_t addrlen;    
 int bufsize = 1024;   
 char *buffer;    
 struct sockaddr_in address; 
-
-// typedef enum {
-// 	"request_job";
-// 	"cancel_job";
-// 	"return_status";
-// 	"change_policy";
-// }request_types;
-
-//Request types
-//	job request_job;
-//	user_id ip;
-//	
-
-//Job types
-//	char[] name;
-//	uint64_t id;
-//	
-
-typedef struct {
-	// Knowledge "database" (in main memory)
-	// Event types:
-	// 	user_request
-	// 		user_id
-	// 		request_made
-	// 		time
-}user_request;
-//Job structure
-typedef struct {
-	char *name;
-	int id;
-	long time_to_run;
-	int priority;
-}job;
 
 //Adding a new job
 job *create_job(char *name, int id, long time_to_run, int priority){
@@ -57,62 +25,6 @@ job *create_job(char *name, int id, long time_to_run, int priority){
 	
 	return new_job;	
 }
-
-//Event data types
-typedef struct {
-    char *sourceComponentId;
-    char *situation;
-}event;
-
-//Symptom data types
-typedef enum {
-	created=0,
-	building=1, 
-	analyzed=2,
-	planning=3, 
-	executing=4, 
-	scheduled=5, 
-	completed=6, 
-	expired=7, 
-	fault=8
-} lifecycle_type;
-
-typedef struct {
-    char *identification;
-    float versioning;
-    char *annotation;
-    char *location;
-    char *scope;
-    char *lifecycle;
-}symptom_metadata;
-
-typedef struct {
-	// definitions can vary so much that we'll only pre-define a key. This may be redundant.
-    char *definition_key;
-}symptom_definition;
-
-typedef struct {
-    char *description;
-    char *example;
-    char *solution;
-    char *reference;
-    char *type;
-    double probability;
-    int priority;
-}symptom_schema;
-
-typedef struct {
-    symptom_metadata *symptom_metadata;
-    symptom_schema *schema;
-    symptom_definition *definition;
-}symptom;
-
-//Policy data types
-typedef struct {
-	//Whatever is in here, it has to be amenable to our policy type.
-	//It may be action-, goal-, or utility function-based
-	char *temp;
-}policy;
 
 void init_server()
 {
@@ -128,6 +40,12 @@ void init_server()
 	{    
 		printf("Binding Socket\n");
 	}
+}
+
+void init_autonomic_manager()
+{
+	//Create event buffer
+	struct Node* head = NULL;
 }
 
 event server_control_cycle()
@@ -225,6 +143,8 @@ void am_monitor()
 	
 	//Check managability interface for managed element state
 	event element_state = retrieve_state();
+
+	//Add event to event queue
 	
 	//Search for symptoms from symptom database using respective symptom engines
 	//Symptoms:
@@ -253,7 +173,7 @@ void am_plan()
 
 void am_execute()
 {
-
+	//Do 'em.
 }
 
 void autonomic_manager_control_cycle()
@@ -267,7 +187,7 @@ void autonomic_manager_control_cycle()
 
 int main() {   
 	init_server();
-	//init_autonomic_manager();
+	init_autonomic_manager();
 	//init_managability_interface(); 
 	while (1) 
 	{    
