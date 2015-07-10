@@ -6,13 +6,7 @@ typedef struct {
 	// 		request_made
 	// 		time
 }user_request;
-//Job structure
-typedef struct {
-	char *name;
-	int id;
-	long time_to_run;
-	int priority;
-}job;
+
 
 //Event data types
 typedef struct {
