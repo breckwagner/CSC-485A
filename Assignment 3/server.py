@@ -25,7 +25,7 @@ import queue
 ################################################################################
 
 # global thread safe queue to pipe requests into the MAPE-K loop
-PORT = 8080;
+PORT = 8000;
 request_queue = [];
 job_queue = {}
 
@@ -85,8 +85,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			
 			if(len(url[2])>1 and url[2][1:] == 'status'):
 				content = "<html><head><title>Status</title></head><body><h1>Status</h1>"
-				for i in range(0, len(request_queue)):
-					content += str(request_queue[i]) + "<br \>"
+				for key in job_queue:
+					content += str(job_queue[key]) + "<br \>"
+					print ("STATUS" + job_queue[key])
 				
 				content += "</body></html>"
 				
