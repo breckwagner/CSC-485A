@@ -130,7 +130,7 @@ void init_server()
 	}
 }
 
-event managed_element_control_cycle()
+event server_control_cycle()
 {
 	event component_state;
 	component_state = (event) {.sourceComponentId="server_0001",.situation="listening"};
@@ -160,6 +160,15 @@ event managed_element_control_cycle()
 	close(new_socket);
 	component_state= (event){.sourceComponentId="server_0001",.situation="website successfully sent"};
 
+	return component_state;
+}
+
+event managed_element_control_cycle()
+{
+	//In a perfect world: return an array of events for n managed elements. 
+	//For this assignment: There is only one managed element that we assume only registers one event at a time.
+	event component_state;
+	component_state = server_control_cycle();
 	return component_state;
 }
 
@@ -195,17 +204,27 @@ void symptom_engine()
 void am_monitor(event element_state)
 {
 	//Search for symptoms from symptom database using respective symptom engines
+	//Symptoms:
+	//	duplicate_requests_suspected
+	//	spammer_detected
+	//	approached_workload_capacity
+	//	job_requested
 }
 
 
 void am_analyze()
 {
+	//Request changes
 
+	//Policies:
+	//	Category 1: non-negotiable requirements
+	//	Category 2: high-priority goals
+	//	Category 3: low-priority goals
 }
 
 void am_plan()
 {
-
+	//Determine actions
 }
 
 void am_execute()
