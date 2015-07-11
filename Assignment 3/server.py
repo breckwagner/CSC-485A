@@ -64,6 +64,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				print('DISCONNECTED')
 				break
 			
+			print("IP: " +os.environ["REMOTE_ADDR"]);
+			
 			# Do data decode and format
 			tmp_data = self.data.decode('utf-8').split('\r\n')
 			_data = {}
@@ -141,8 +143,6 @@ if __name__ == "__main__":
 		
 		
 		# Execute
-		#job_queue.append()
-	
 		########################################################################
 		
 		# for
