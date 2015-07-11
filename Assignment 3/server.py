@@ -38,15 +38,16 @@ job_queue = {}
 symptom_names = ["duplicate requests detected","malicious user detected"]
 current_symptoms = []
 
+log = []
+
 # Utility Functions
 ################################################################################
 
 def dispatcher(request, args):
 	if(request=='addJob'):
 		job_id = str(args['id'][0])
-		print("dispatcher: id[" +str(args['id'][0])+ "]")
 		job_queue[job_id] = {'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0], 'start':time.time()};
-		print("Added: Job " + str(job_id));
+		print("Added: Job with ID: " + str(job_id));
 		#print("dispatcher: "+str(job_queue[str(args['id'][0])]))
 	elif(request=='modifyJob'):
 		modifyJob(name, id, runtime, priority)
@@ -67,9 +68,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				print('DISCONNECTED')
 				break
 			
-			print (str(self.request.getpeername()))
-			#print("IP: " +os.environ["REMOTE_ADDR"]);
-			
 			# Do data decode and format
 			tmp_data = self.data.decode('utf-8').split('\r\n')
 			_data = {}
@@ -81,14 +79,14 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			content = ""
 			
 			if(len(url[2])>1 and url[2][1:] == 'status' or url[2][1:]==''):
-				print("Sending Status");
+				print("Sending Status To: "+str(self.request.getpeername()[0]));
 				content = "<html><head><title>Status</title></head><body><h1>Status</h1><h2>Running</h2>"
 				for key in job_queue:
 					content += str(job_queue[key]) + "<br \>"
 				
 				content += "<h2>Queued</h2>"
 				
-				print("TEST: " + str(request_queue))
+				#print("TEST: " + str(request_queue))
 				#for key in request_queue:
 				#	content += str(request_queue[key]) + "<br \>"
 				
