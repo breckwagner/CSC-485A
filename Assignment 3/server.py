@@ -28,6 +28,8 @@ import queue
 request_queue = queue.Queue();
 job_queue = {}
 
+symptom_names = ["duplicate requests detected","malicious user detected"]
+
 # Utility Functions
 ################################################################################
 
@@ -129,3 +131,71 @@ if __name__ == "__main__":
 		
 		# Execute
 		#job_queue.append()
+
+def init():
+	init_server()
+	init_autonomic_manager()
+
+def init_server():
+	return None
+
+def init_autonomic_manager():
+	init_knowledge_database();
+
+def init_knowledge_database():
+	init_event_log();
+	init_symptoms_database();
+
+def init_event_log():
+
+def init_symptoms_database():
+	# Enumerate symptoms
+	return None
+
+def symptom_check(symptom_name):
+	symptom = 0
+	if (symptom_name == "duplicate requests detected"):
+		#execute symptom engine for "duplicate requests detected" symptom
+	elif (symptom_name == "malicious user detected"):
+		#execute symptom engine for "malicious user detected" symptom
+	#etc.
+	return symptom
+
+def autonomic_manager_control_cycle():
+	monitor()
+	analyze()
+	plan()
+	execute()
+
+def managed_element_control_cycle():
+	return None
+
+def retrieve_state_from_managability_endpoint():
+	#lazily execute managed element cycle directly before retrieving its state
+	returned_event = managed_element_control_cycle()
+	return returned_event
+
+def monitor():
+	event_current = retrieve_state_from_managability_endpoint()
+	write_event_to_event_log_buffer(event)
+	#check for symptoms
+	for symptom_name in symptom_names:
+		symptom_check(symptom_name)
+	return None
+
+def write_event_to_event_log_buffer(event):
+	return None
+
+def flush_event_log_buffer():
+	return None
+
+def analyze():
+	return None
+
+def plan():
+	return None
+
+def execute():
+	return None
+	
+
