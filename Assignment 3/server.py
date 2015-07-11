@@ -26,7 +26,7 @@ import queue
 
 # port of the server
 #PORT = 8000;
-PORT = 8080;
+PORT = 8000;
 MAX_JOBS = 3
 
 # global thread safe queue to pipe requests into the MAPE-K loop
@@ -108,58 +108,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			
 			self.request.sendall(str(header+content).encode('utf-8'))
 
-			
-			
-# Main
-################################################################################
-
-if __name__ == "__main__":
-	server = socketserver.TCPServer(('', PORT), MyTCPHandler)
-	
-	# put actual listener on different thread for asynchronous job retrieval
-	_threading.Thread(target=server.serve_forever).start()
-	
-	# MAPE-K loop
-	while(True):
-		
-		# pause loop
-		time.sleep(10)
-		
-		# Monitor
-		########################################################################
-		
-		# if request_queue is not empty
-		if(request_queue):
-			# fetch request from queue
-			request = request_queue.pop(0)
-		else:
-			request = None
-		
-		# Analyze/Plan
-		########################################################################
-		
-		# if a job has gone past its max runtime, scheduale it for removal
-		r_queue = []
-		for i in job_queue:
-			if(float(job_queue[i]['runtime']) < time.time() - job_queue[i]['start']):
-				r_queue.append(job_queue[i])
-				
-		# if there is "room" in the execution list
-		room = (len(job_queue)<=3)
-			
-		
-		
-		# Execute
-		########################################################################
-		
-		# for
-		while r_queue:
-			del job_queue[r_queue.pop()['id']]
-		
-		if(request and room):
-			dispatcher(request[0], request[1])
-
-
 def init():
 	init_server()
 	init_autonomic_manager()
@@ -204,7 +152,7 @@ def autonomic_manager_control_cycle():
 
 	# pause loop
 	time.sleep(0.5)
-	print("yolo");
+	#print("yolo");
 
 def managed_element_control_cycle():
 	pass
@@ -238,7 +186,6 @@ def flush_event_log_buffer():
 
 def analyze():
 	# if a job has gone past its max runtime, scheduale it for removal
-	r_queue = []
 	for i in job_queue:
 		if(float(job_queue[i]['runtime']) < time.time() - job_queue[i]['start']):
 			r_queue.append(job_queue[i])
