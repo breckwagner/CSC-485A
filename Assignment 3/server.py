@@ -42,13 +42,15 @@ current_symptoms = []
 
 def dispatcher(request, args):
 	if(request=='addJob'):
+		job_id = str(args['id'][0])
 		print("dispatcher: id[" +str(args['id'][0])+ "]")
-		job_queue[str(args['id'][0])] = {'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0], 'start':time.time()};
+		job_queue[job_id] = {'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0], 'start':time.time()};
+		print("Added: Job " + str(job_id));
 		#print("dispatcher: "+str(job_queue[str(args['id'][0])]))
-	#elif(request=='modifyJob'):
-	#	modifyJob(name, id, runtime, priority)
-	#elif(request=='removeJob'):
-	#	removeJob(id)
+	elif(request=='modifyJob'):
+		modifyJob(name, id, runtime, priority)
+	elif(request=='removeJob'):
+		removeJob(id)
 
 # Classes
 ################################################################################
@@ -74,11 +76,14 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			
 			if(len(url[2])>1 and url[2][1:] == 'status'):
 				print("Sending Status");
-				content = "<html><head><title>Status</title></head><body><h1>Status</h1>"
+				content = "<html><head><title>Status</title></head><body><h1>Status</h1><h2>Running</h2>"
 				for key in job_queue:
-					print("TEST")
 					content += str(job_queue[key]) + "<br \>"
-					print ("STATUS" + str(job_queue[key]))
+				
+				content += "<h2>Queued</h2>"
+				
+				for key in request_queue:
+					content += str(request_queue[key]) + "<br \>"
 				
 				content += "</body></html>"
 				
@@ -143,7 +148,6 @@ if __name__ == "__main__":
 		
 		if(request and room):
 			dispatcher(request[0], request[1])
-			print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
 
 """
 def init():
