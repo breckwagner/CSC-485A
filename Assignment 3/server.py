@@ -24,37 +24,21 @@ import queue
 # Global Variables
 ################################################################################
 
+# port of the server
+PORT = 8080;
+
 # global thread safe queue to pipe requests into the MAPE-K loop
-PORT = 8000;
 request_queue = [];
+
+
 job_queue = {}
 
 # Utility Functions
 ################################################################################
 
-##
-# @param name The command/job to execute (e.g. 'find X -name "Y" > output.txt &')
-# @param id Unique number to give job so user can get job status
-# @param runtime The maximum amount of time the command can be allowed to run
-# @param priority The priority the user would like the command to have
-#def addJob(name, id, runtime, priority):
-	#job_queue.append(id:{'name':name, 'id':id, 'runtime':runtime, 'priority':priority})
-
-##
-# @param name The command/job to execute (e.g. 'find X -name "Y" > output.txt &')
-# @param id Unique number to give job so user can get job status
-# @param runtime The maximum amount of time the command can be allowed to run
-# @param priority The priority the user would like the command to have
-#def modifyJob(name, id, runtime, priority):
-#	return {'name':name, 'id':id, 'runtime':runtime, 'priority':priority}
-
-##
-# @param id Unique number to give job so user can get job status
-#def removeJob(id):
-#	return {'name':name, 'id':id, 'runtime':runtime, 'priority':priority}
-
 def dispatcher(request, args):
 	if(request=='addJob'):
+		print("dispatcher: id[" +str(args['id'][0])]+ "]")
 		job_queue[str(args['id'][0])] = {'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0], 'start':time.time()};
 	elif(request=='modifyJob'):
 		modifyJob(name, id, runtime, priority)
@@ -84,10 +68,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			
 			
 			if(len(url[2])>1 and url[2][1:] == 'status'):
+				print("Sending Status");
 				content = "<html><head><title>Status</title></head><body><h1>Status</h1>"
 				for key in job_queue:
-					content += str(job_queue[key]) + "<br \>"
-					print ("STATUS" + job_queue[key])
+					print("TEST")
+					#content += str(job_queue[key]) + "<br \>"
+					#print ("STATUS" + job_queue[key])
 				
 				content += "</body></html>"
 				
@@ -124,7 +110,6 @@ if __name__ == "__main__":
 		if(request_queue):
 			# fetch request from queue
 			request = request_queue.pop(0)
-			print(request)
 		else:
 			request = None
 		
@@ -151,3 +136,4 @@ if __name__ == "__main__":
 		
 		if(request and room):
 			dispatcher(request[0], request[1])
+			print("Added: "+ str(len(job_queue))  +"     " + str(request))
