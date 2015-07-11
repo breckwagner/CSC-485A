@@ -26,7 +26,7 @@ import queue
 
 # port of the server
 #PORT = 8000;
-PORT = 8080;
+PORT = 8000;
 
 # global thread safe queue to pipe requests into the MAPE-K loop
 request_queue = [];
@@ -64,6 +64,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				print('DISCONNECTED')
 				break
 			
+			print (str(self.request.getpeername()))
 			#print("IP: " +os.environ["REMOTE_ADDR"]);
 			
 			# Do data decode and format
@@ -107,7 +108,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 ################################################################################
 
 if __name__ == "__main__":
-	server = socketserver.TCPServer(('localhost', PORT), MyTCPHandler)
+	server = socketserver.TCPServer(('', PORT), MyTCPHandler)
 	
 	# put actual listener on different thread for asynchronous job retrieval
 	_threading.Thread(target=server.serve_forever).start()
