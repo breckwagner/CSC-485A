@@ -31,12 +31,9 @@ MAX_JOBS = 3
 
 # global thread safe queue to pipe requests into the MAPE-K loop
 request_queue = [];
-request = None
-server = None
 
 # represents jobs currently executing
 job_queue = {}
-r_queue = []
 
 symptom_names = ["duplicate requests detected","malicious user detected"]
 current_symptoms = []
@@ -89,9 +86,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				
 				content += "<h2>Queued</h2>"
 				
-				print("[][]"+str(request_queue))
-				#for key in request_queue:
-				#	content += str(request_queue[key]) + "<br \>"
+				for key in request_queue:
+					content += str(request_queue[key]) + "<br \>"
 				
 				content += "</body></html>"
 				
@@ -107,107 +103,55 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			header = "HTTP/1.1 200 OK\nContent-length: " + str(len(content)) + "\nContent-Type: text/html\n\n"
 			
 			self.request.sendall(str(header+content).encode('utf-8'))
-
-def init():
-	init_server()
-	init_autonomic_manager()
-
-def init_server():
-	if __name__ == "__main__":
-		server = socketserver.TCPServer(('localhost', PORT), MyTCPHandler)
-
-		# put actual listener on different thread for asynchronous job retrieval
-		_threading.Thread(target=server.serve_forever).start()
-	pass
-
-def init_autonomic_manager():
-	init_knowledge_database();
-
-def init_knowledge_database():
-	init_event_log();
-	init_symptoms_database();
-
-def init_event_log():
-	pass
-def init_symptoms_database():
-	# Enumerate symptoms
-	pass
-
-def symptom_check(symptom_name):
-	symptom = 0
-	if (symptom_name == "duplicate requests detected"):
-		#execute symptom engine for "duplicate requests detected" symptom
-		pass
-	elif (symptom_name == "malicious user detected"):
-		#execute symptom engine for "malicious user detected" symptom
-		pass
-	#etc.
-	return symptom
-
-def autonomic_manager_control_cycle():
-	monitor()
-	analyze()
-	plan()
-	execute()
-
-	# pause loop
-	time.sleep(0.5)
-	#print("yolo");
-
-def managed_element_control_cycle():
-	pass
-
-def retrieve_state_from_managability_endpoint():
-	#lazily execute managed element cycle directly before retrieving its state
-	returned_event = managed_element_control_cycle()
-	return returned_event
-
-def monitor():
-	#event_current = retrieve_state_from_managability_endpoint()
-	#write_event_to_event_log_buffer(event)
-
-	# if request_queue is not empty
-	if(request_queue):
-		# fetch request from queue
-		request = request_queue.pop(0)
-	else:
-		request = None
-
-	#check for new symptoms
-	for symptom_name in symptom_names:
-		symptom_check(symptom_name)
-	return None
-
-def write_event_to_event_log_buffer(event):
-	pass
-
-def flush_event_log_buffer():
-	pass
-
-def analyze():
-	# if a job has gone past its max runtime, scheduale it for removal
-	for i in job_queue:
-		if(float(job_queue[i]['runtime']) < time.time() - job_queue[i]['start']):
-			r_queue.append(job_queue[i])
 			
-	# if there is "room" in the execution list
-	room = (len(job_queue)<=MAX_JOBS)
-
-def plan():
-	pass
-
-def execute():
-	while r_queue:
-		del job_queue[r_queue.pop()['id']]
-	
-	if(request and room):
-		dispatcher(request[0], request[1])
-	pass
-				
+			
 # Main
 ################################################################################
-init();
-# MAPE-K loop
-while(True):
-	autonomic_manager_control_cycle();
+
+if __name__ == "__main__":
+	server = socketserver.TCPServer(('', PORT), MyTCPHandler)
+	
+	# put actual listener on different thread for asynchronous job retrieval
+	_threading.Thread(target=server.serve_forever).start()
+	
+	# MAPE-K loop
+	while(True):
+		
+		# pause loop
+		time.sleep(0.5)
+		
+		# Monitor
+		########################################################################
+		
+		# if request_queue is not empty
+		if(request_queue):
+			# fetch request from queue
+			request = request_queue.pop(0)
+		else:
+			request = None
+		
+		# Analyze/Plan
+		########################################################################
+		
+		# if a job has gone past its max runtime, scheduale it for removal
+		r_queue = []
+		for i in job_queue:
+			if(float(job_queue[i]['runtime']) < time.time() - job_queue[i]['start']):
+				r_queue.append(job_queue[i])
+				
+		# if there is "room" in the execution list
+		room = (len(job_queue)<=MAX_JOBS)
+			
+		
+		
+		# Execute
+		########################################################################
+		
+		# for
+		while r_queue:
+			del job_queue[r_queue.pop()['id']]
+		
+		if(request and room):
+			dispatcher(request[0], request[1])
+
 
