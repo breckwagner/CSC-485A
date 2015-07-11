@@ -89,8 +89,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				
 				content += "<h2>Queued</h2>"
 				
-				for key in request_queue:
-					content += str(request_queue[key]) + "<br \>"
+				print("[][]"+str(request_queue))
+				#for key in request_queue:
+				#	content += str(request_queue[key]) + "<br \>"
 				
 				content += "</body></html>"
 				
@@ -106,6 +107,60 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			header = "HTTP/1.1 200 OK\nContent-length: " + str(len(content)) + "\nContent-Type: text/html\n\n"
 			
 			self.request.sendall(str(header+content).encode('utf-8'))
+<<<<<<< Updated upstream
+=======
+			
+			
+# Main
+################################################################################
+
+if __name__ == "__main__":
+	server = socketserver.TCPServer(('', PORT), MyTCPHandler)
+	
+	# put actual listener on different thread for asynchronous job retrieval
+	_threading.Thread(target=server.serve_forever).start()
+	
+	# MAPE-K loop
+	while(True):
+		
+		# pause loop
+		time.sleep(10)
+		
+		# Monitor
+		########################################################################
+		
+		# if request_queue is not empty
+		if(request_queue):
+			# fetch request from queue
+			request = request_queue.pop(0)
+		else:
+			request = None
+		
+		# Analyze/Plan
+		########################################################################
+		
+		# if a job has gone past its max runtime, scheduale it for removal
+		r_queue = []
+		for i in job_queue:
+			if(float(job_queue[i]['runtime']) < time.time() - job_queue[i]['start']):
+				r_queue.append(job_queue[i])
+				
+		# if there is "room" in the execution list
+		room = (len(job_queue)<=3)
+			
+		
+		
+		# Execute
+		########################################################################
+		
+		# for
+		while r_queue:
+			del job_queue[r_queue.pop()['id']]
+		
+		if(request and room):
+			dispatcher(request[0], request[1])
+
+>>>>>>> Stashed changes
 
 def init():
 	init_server()
