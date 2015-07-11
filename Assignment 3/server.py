@@ -27,6 +27,7 @@ import queue
 # port of the server
 #PORT = 8000;
 PORT = 8000;
+MAX_JOBS = 3
 
 # global thread safe queue to pipe requests into the MAPE-K loop
 request_queue = [];
@@ -229,7 +230,7 @@ def analyze():
 			r_queue.append(job_queue[i])
 			
 	# if there is "room" in the execution list
-	room = (len(job_queue)<=3)
+	room = (len(job_queue)<=MAX_JOBS)
 
 	# Execute
 	#job_queue.append()
