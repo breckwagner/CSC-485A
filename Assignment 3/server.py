@@ -107,8 +107,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			header = "HTTP/1.1 200 OK\nContent-length: " + str(len(content)) + "\nContent-Type: text/html\n\n"
 			
 			self.request.sendall(str(header+content).encode('utf-8'))
-<<<<<<< Updated upstream
-=======
+
 			
 			
 # Main
@@ -160,7 +159,6 @@ if __name__ == "__main__":
 		if(request and room):
 			dispatcher(request[0], request[1])
 
->>>>>>> Stashed changes
 
 def init():
 	init_server()
