@@ -74,7 +74,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			url = urlparse('http://' + _data['Host:'][0] + _data['GET'][0])
 			
 			
-			if(len(url[2])>1 and url[2][1:] == 'status'):
+			if(len(url[2])>1 and url[2][1:] == 'status' or url[2][1:]==''):
 				print("Sending Status");
 				content = "<html><head><title>Status</title></head><body><h1>Status</h1><h2>Running</h2>"
 				for key in job_queue:
@@ -90,6 +90,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 			elif(len(url[2])>1 and url[2][1:] != 'favicon.ico' ):
 				request_queue.append([url[2][1:], parse_qs(url[4],keep_blank_values=True)])
 				content ="<html><body><h1>Your Request Has Been Recieved</h1></body></html>"
+				
+			else:
+				content = "<html><head><title>Error</title></head><body><h1>Error: Malformed URL</h1>";
 			
 			
 			
