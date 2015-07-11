@@ -25,12 +25,13 @@ import queue
 ################################################################################
 
 # port of the server
+#PORT = 8000;
 PORT = 8080;
 
 # global thread safe queue to pipe requests into the MAPE-K loop
 request_queue = [];
 
-
+# represents jobs currently executing
 job_queue = {}
 
 symptom_names = ["duplicate requests detected","malicious user detected"]
@@ -77,7 +78,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				for key in job_queue:
 					print("TEST")
 					content += str(job_queue[key]) + "<br \>"
-					print ("STATUS" + job_queue[key])
+					print ("STATUS" + str(job_queue[key]))
 				
 				content += "</body></html>"
 				
@@ -123,7 +124,7 @@ if __name__ == "__main__":
 		# if a job has gone past its max runtime, scheduale it for removal
 		r_queue = []
 		for i in job_queue:
-			if(float(job_queue[i]['runtime']) > time.time() - job_queue[i]['start']):
+			if(float(job_queue[i]['runtime']) < time.time() - job_queue[i]['start']):
 				r_queue.append(job_queue[i])
 				
 		# if there is "room" in the execution list
@@ -137,14 +138,14 @@ if __name__ == "__main__":
 		########################################################################
 		
 		# for
-		#while r_queue:
-		#	del job_queue[r_queue.pop()['id']]
+		while r_queue:
+			del job_queue[r_queue.pop()['id']]
 		
 		if(request and room):
 			dispatcher(request[0], request[1])
 			print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
 
-
+"""
 def init():
 	init_server()
 	init_autonomic_manager()
@@ -238,3 +239,4 @@ def plan():
 
 def execute():
 	return None
+"""
