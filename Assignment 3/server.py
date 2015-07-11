@@ -38,12 +38,13 @@ job_queue = {}
 
 def dispatcher(request, args):
 	if(request=='addJob'):
-		print("dispatcher: id[" +str(args['id'][0])]+ "]")
+		print("dispatcher: id[" +str(args['id'][0])+ "]")
 		job_queue[str(args['id'][0])] = {'name':args['name'][0], 'id':args['id'][0], 'runtime':args['runtime'][0], 'priority':args['priority'][0], 'start':time.time()};
-	elif(request=='modifyJob'):
-		modifyJob(name, id, runtime, priority)
-	elif(request=='removeJob'):
-		removeJob(id)
+		#print("dispatcher: "+str(job_queue[str(args['id'][0])]))
+	#elif(request=='modifyJob'):
+	#	modifyJob(name, id, runtime, priority)
+	#elif(request=='removeJob'):
+	#	removeJob(id)
 
 # Classes
 ################################################################################
@@ -72,8 +73,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				content = "<html><head><title>Status</title></head><body><h1>Status</h1>"
 				for key in job_queue:
 					print("TEST")
-					#content += str(job_queue[key]) + "<br \>"
-					#print ("STATUS" + job_queue[key])
+					content += str(job_queue[key]) + "<br \>"
+					print ("STATUS" + job_queue[key])
 				
 				content += "</body></html>"
 				
@@ -131,9 +132,10 @@ if __name__ == "__main__":
 		########################################################################
 		
 		# for
-		while r_queue:
-			del job_queue[r_queue.pop()['id']]
+		#while r_queue:
+		#	del job_queue[r_queue.pop()['id']]
 		
 		if(request and room):
 			dispatcher(request[0], request[1])
-			print("Added: "+ str(len(job_queue))  +"     " + str(request))
+			print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
+			
