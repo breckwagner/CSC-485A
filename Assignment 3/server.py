@@ -70,7 +70,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				if(len(tmp)>1):
 					_data[tmp[0]] = tmp[1:]
 			url = urlparse('http://' + _data['Host:'][0] + _data['GET'][0])
-			
+			content = ""
 			
 			if(len(url[2])>1 and url[2][1:] == 'status'):
 				print("Sending Status");
@@ -145,13 +145,13 @@ if __name__ == "__main__":
 			dispatcher(request[0], request[1])
 			print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
 
-"""
+
 def init():
 	init_server()
 	init_autonomic_manager()
 
 def init_server():
-	return None
+	pass
 
 def init_autonomic_manager():
 	init_knowledge_database();
@@ -161,17 +161,19 @@ def init_knowledge_database():
 	init_symptoms_database();
 
 def init_event_log():
-
+	pass
 def init_symptoms_database():
 	# Enumerate symptoms
-	return None
+	pass
 
 def symptom_check(symptom_name):
 	symptom = 0
 	if (symptom_name == "duplicate requests detected"):
 		#execute symptom engine for "duplicate requests detected" symptom
+		pass
 	elif (symptom_name == "malicious user detected"):
 		#execute symptom engine for "malicious user detected" symptom
+		pass
 	#etc.
 	return symptom
 
@@ -182,7 +184,7 @@ def autonomic_manager_control_cycle():
 	execute()
 
 def managed_element_control_cycle():
-	return None
+	pass
 
 def retrieve_state_from_managability_endpoint():
 	#lazily execute managed element cycle directly before retrieving its state
@@ -206,10 +208,10 @@ def monitor():
 	return None
 
 def write_event_to_event_log_buffer(event):
-	return None
+	pass
 
 def flush_event_log_buffer():
-	return None
+	pass
 
 def analyze():
 	# if a job has gone past its max runtime, scheduale it for removal
@@ -235,8 +237,7 @@ def analyze():
 		print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
 
 def plan():
-	return None
+	pass
 
 def execute():
-	return None
-"""
+	pass
