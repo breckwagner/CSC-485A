@@ -34,6 +34,7 @@ request_queue = [];
 job_queue = {}
 
 symptom_names = ["duplicate requests detected","malicious user detected"]
+current_symptoms = []
 
 # Utility Functions
 ################################################################################
@@ -188,9 +189,17 @@ def retrieve_state_from_managability_endpoint():
 	return returned_event
 
 def monitor():
-	event_current = retrieve_state_from_managability_endpoint()
-	write_event_to_event_log_buffer(event)
-	#check for symptoms
+	#event_current = retrieve_state_from_managability_endpoint()
+	#write_event_to_event_log_buffer(event)
+
+	# if request_queue is not empty
+	if(request_queue):
+		# fetch request from queue
+		request = request_queue.pop(0)
+	else:
+		request = None
+
+	#check for new symptoms
 	for symptom_name in symptom_names:
 		symptom_check(symptom_name)
 	return None
@@ -202,7 +211,27 @@ def flush_event_log_buffer():
 	return None
 
 def analyze():
-	return None
+	# if a job has gone past its max runtime, scheduale it for removal
+	r_queue = []
+	for i in job_queue:
+		if(float(job_queue[i]['runtime']) > time.time() - job_queue[i]['start']):
+			r_queue.append(job_queue[i])
+			
+	# if there is "room" in the execution list
+	room = (len(job_queue)<=3)
+
+	# Execute
+	#job_queue.append()
+
+	########################################################################
+	
+	# for
+	#while r_queue:
+	#	del job_queue[r_queue.pop()['id']]
+	
+	if(request and room):
+		dispatcher(request[0], request[1])
+		print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
 
 def plan():
 	return None
