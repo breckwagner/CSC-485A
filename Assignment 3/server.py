@@ -144,7 +144,7 @@ if __name__ == "__main__":
 			dispatcher(request[0], request[1])
 			print("Updated: "+str(len(job_queue))+"  |"+str(job_queue))
 
-
+"""
 def init():
 	init_server()
 	init_autonomic_manager()
@@ -210,3 +210,4 @@ def plan():
 
 def execute():
 	return None
+"""
