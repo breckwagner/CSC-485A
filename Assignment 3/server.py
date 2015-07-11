@@ -27,7 +27,7 @@ import queue
 # port of the server
 #PORT = 8000;
 PORT = 8000;
-MAX_JOBS = 3
+MAX_JOBS = 4
 
 # global thread safe queue to pipe requests into the MAPE-K loop
 request_queue = [];
@@ -52,6 +52,8 @@ def dispatcher(request, args):
 		modifyJob(name, id, runtime, priority)
 	elif(request=='removeJob'):
 		removeJob(id)
+	elif(request=='update'):
+		pass
 
 # Classes
 ################################################################################
@@ -86,8 +88,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				
 				content += "<h2>Queued</h2>"
 				
-				for key in request_queue:
-					content += str(request_queue[key]) + "<br \>"
+				print("TEST: " + str(request_queue))
+				#for key in request_queue:
+				#	content += str(request_queue[key]) + "<br \>"
 				
 				content += "</body></html>"
 				
@@ -140,7 +143,8 @@ if __name__ == "__main__":
 				r_queue.append(job_queue[i])
 				
 		# if there is "room" in the execution list
-		room = (len(job_queue)<=MAX_JOBS)
+		room = (len(job_queue)<MAX_JOBS)
+		
 			
 		
 		
@@ -150,6 +154,7 @@ if __name__ == "__main__":
 		# for
 		while r_queue:
 			del job_queue[r_queue.pop()['id']]
+			print("Enforcing Policy: Job Stalled")
 		
 		if(request and room):
 			dispatcher(request[0], request[1])
