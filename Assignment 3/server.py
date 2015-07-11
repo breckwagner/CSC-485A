@@ -64,7 +64,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 				print('DISCONNECTED')
 				break
 			
-			print("IP: " +os.environ["REMOTE_ADDR"]);
+			#print("IP: " +os.environ["REMOTE_ADDR"]);
 			
 			# Do data decode and format
 			tmp_data = self.data.decode('utf-8').split('\r\n')
